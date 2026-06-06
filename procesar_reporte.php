@@ -88,7 +88,7 @@ if (isset($_FILES['evidencia'])) {
             $diagnostico = "¡Éxito! Imagen guardada en servidor.";
         } else {
             $diagnostico = "Fallo al mover la imagen a la carpeta uploads.";
-            $nombre_foto = "sin_foto.jpg"; // Revertimos si falla
+            $nombre_foto = "sin_foto.jpg";
         }
     } elseif ($error_foto === UPLOAD_ERR_NO_FILE) {
         $diagnostico = "Ningún archivo fue seleccionado o adjuntado.";
@@ -108,11 +108,17 @@ $sql = "INSERT INTO reporte (colonia, calle, municipio, latitud, longitud, descr
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 $stmt = $conn->prepare($sql);
+
+if (!$stmt) {
+    http_response_code(500);
+    echo json_encode(["status" => "error", "message" => "Error en preparación SQL: " . $conn->error]);
+    exit;
+}
+
 $stmt->bind_param("ssssssssssii", $colonia, $calle, $municipio, $latitud, $longitud, $descrip, $fecha, $hora, $nombre_foto, $estatus, $idUsuario, $idCategoria);
 
 if ($stmt->execute()) {
     http_response_code(201);
-    // AQUÍ ENVIAMOS EL CHISME DE REGRESO
     echo json_encode([
         "status" => "success",
         "message" => "¡Reporte guardado exitosamente!",
