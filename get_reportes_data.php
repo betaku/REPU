@@ -17,16 +17,14 @@ while ($row = $res->fetch_assoc()) {
     $stats[$row['estatus']] = $row['total'];
 }
 
-// 2. Obtener lista de reportes para el mapa y tabla
+// 2. Obtener lista de reportes para el mapa y tabla (INCLUIR idCategoria)
 $reportes = [];
-$res = $conn->query("SELECT idReporte, calle, municipio, latitud, longitud, estatus, foto, descrip FROM reporte ORDER BY idReporte DESC LIMIT 10");
+$res = $conn->query("SELECT idReporte, calle, municipio, latitud, longitud, estatus, foto, descrip, idCategoria FROM reporte ORDER BY idReporte DESC LIMIT 10");
 while ($row = $res->fetch_assoc()) {
     $reportes[] = $row;
 }
 
 echo json_encode(["stats" => $stats, "reportes" => $reportes]);
 $conn->close();
-
-
 
 ?>
