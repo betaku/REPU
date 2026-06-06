@@ -1,0 +1,169 @@
+<?php include 'check_session.php'; ?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REPU - Reportar Incidencia</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
+        .sidebar { height: 100vh; width: 250px; position: fixed; top: 0; left: 0; background-color: #0d47a1; padding-top: 20px; color: white; }
+        .sidebar a { padding: 15px 25px; text-decoration: none; font-size: 1.1rem; color: #d1d1d1; display: block; }
+        .sidebar a:hover { color: white; background-color: #1565c0; }
+        .sidebar a.active { background-color: #1976d2; color: white; border-left: 5px solid #bbdefb; }
+        .main-content { margin-left: 250px; padding: 40px; }
+        .card-custom { border: none; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); background-color: white; }
+        #mapa-reporte { height: 100%; min-height: 380px; border-radius: 12px; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar shadow">
+        <div class="px-4 mb-5 text-center">
+            <h3 class="fw-bold">REPU</h3>
+            <p class="small opacity-75">Gestión Urbana</p>
+        </div>
+        <a href="menu.html"><i class="fa-solid fa-house me-2"></i> Inicio</a>
+        <a href="reportar.html" class="active"><i class="fa-solid fa-file-pen me-2"></i> Crear Reporte</a>
+        <a href="historial.php"><i class="fa-solid fa-list-check me-2"></i> Historial</a>
+        <a href="ayuda.html"><i class="fa-solid fa-circle-question me-2"></i> Ayuda</a>
+        <hr class="mx-3 opacity-25">
+        <a href="logout.php" class="text-danger">
+            <i class="fa-solid fa-right-from-bracket me-2"></i> Cerrar Sesión
+        </a>
+    </div>
+
+    <div class="main-content">
+        <div class="mb-4">
+            <h2 class="fw-bold">Nuevo Reporte</h2>
+            <p class="text-muted">Selecciona la ubicación exacta en el mapa interactivo para generar tu reporte con mayor precisión.</p>
+        </div>
+
+        <div class="card card-custom p-4">
+            <h4 class="fw-bold text-dark mb-4"><i class="fa-solid fa-bullhorn text-primary me-2"></i>Registrar Incidencia</h4>
+            
+            <div class="row g-4">
+                <div class="col-lg-7">
+                    <form id="form-reporte">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-secondary">Tipo de Problemática</label>
+                            <select name="idCategoria" id="tipo_problema" class="form-select form-select-lg" required>
+                                <option selected disabled value="">Selecciona una opción...</option>
+                               <option value="1">Bache / Socavón</option>
+                            <option value="2">Falla de Luminaria (Alumbrado)</option>
+                            <option value="3">Fuga de Agua / Drenaje</option>
+                            <option value="4">Acumulación de Basura</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-secondary">Dirección de Ubicación</label>
+                            <input type="text" name="ubicacion" id="ubicacion-input" class="form-control form-control-lg bg-light" placeholder="Haz clic en el mapa de la derecha para fijar la ubicación" readonly required>
+                            <input type="hidden" name="latitud" id="lat-input">
+                            <input type="hidden" name="longitud" id="lng-input">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-secondary">Descripción del Problema</label>
+                            <textarea name="descripcion" id="descripcion" class="form-control" rows="3" placeholder="Describe detalladamente la situación..." required></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold text-secondary">Evidencia (Foto de la problemática)</label>
+                            <input name="evidencia" id="evidencia" class="form-control" type="file" accept="image/*">
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary btn-lg fw-bold px-4">Enviar Reporte</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-lg-5">
+                    <label class="form-label fw-semibold text-primary"><i class="fa-solid fa-crosshairs me-1"></i> Asistente de Ubicación (Haz Clic)</label>
+                    <div id="mapa-reporte" class="border"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // 1. INICIALIZACIÓN DEL MAPA (Esto ya lo tenías)
+        var mapReporte = L.map('mapa-reporte').setView([23.7369, -99.1411], 14);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(mapReporte);
+
+        var marker;
+
+        // 2. EVENTO DE CLIC EN EL MAPA (Geocodificación)
+        mapReporte.on('click', function(e) {
+            var lat = e.latlng.lat.toFixed(6);
+            var lng = e.latlng.lng.toFixed(6);
+
+            document.getElementById('ubicacion-input').value = "Buscando dirección...";
+            document.getElementById('lat-input').value = lat;
+            document.getElementById('lng-input').value = lng;
+
+            if (marker) {
+                mapReporte.removeLayer(marker);
+            }
+
+            marker = L.marker([lat, lng]).addTo(mapReporte);
+
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`)
+                .then(response => response.json())
+                .then(data => {
+                    let direccion = data.display_name;
+                    document.getElementById('ubicacion-input').value = direccion;
+                    marker.bindPopup(`<b>Ubicación seleccionada:</b><br>${direccion}`).openPopup();
+                })
+                .catch(error => {
+                    console.error("Error al obtener la dirección:", error);
+                    document.getElementById('ubicacion-input').value = `Ubicación: ${lat}, ${lng} (Error de red)`;
+                    marker.bindPopup(`Ubicación seleccionada`).openPopup();
+                });
+        });
+
+        // =========================================================
+        // 3. AQUÍ PEGAS EL NUEVO BLOQUE (Envío a la base de datos)
+        // =========================================================
+        document.getElementById('form-reporte').addEventListener('submit', function(e) {
+            e.preventDefault(); // Evita que la página se recargue automáticamente
+
+            let formData = new FormData(this);
+
+            if(!document.getElementById('lat-input').value) {
+                alert("Por favor, haz clic en el mapa para fijar la ubicación de la incidencia.");
+                return;
+            }
+
+            fetch('procesar_reporte.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    alert(data.message);
+                    this.reset(); 
+                    if (marker) mapReporte.removeLayer(marker); 
+                    document.getElementById('ubicacion-input').value = ""; 
+                } else {
+                    alert("Hubo un problema: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Ocurrió un error crítico al intentar comunicarse con el servidor.");
+            });
+        });
+    </script>
+</body>
+</html>
