@@ -1,15 +1,9 @@
 <?php
-// ═══════════════════════════════════════════════════════════════
-// procesar_reporte.php - INSERTAR REPORTES EN BD
-// ═══════════════════════════════════════════════════════════════
-
 date_default_timezone_set('America/Mexico_City');
-
 session_start();
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-header('Content-Type: application/json');
+ini_set('display_errors', 0);
+header('Content-Type: application/json; charset=utf-8');
 
 if (!isset($_SESSION['idUsuario'])) {
     http_response_code(401);
@@ -19,7 +13,7 @@ if (!isset($_SESSION['idUsuario'])) {
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     http_response_code(405);
-    echo json_encode(["status" => "error", "message" => "Método HTTP no permitido."]);
+    echo json_encode(["status" => "error", "message" => "Método no permitido."]);
     exit;
 }
 
@@ -31,22 +25,21 @@ $nombre_bd = "bd_repu";
 $conn = new mysqli($servidor, $usuario_db, $password_db, $nombre_bd);
 if ($conn->connect_error) {
     http_response_code(500);
-    echo json_encode(["status" => "error", "message" => "Error BD: " . $conn->connect_error]);
+    echo json_encode(["status" => "error", "message" => "Error de BD: " . $conn->connect_error]);
     exit;
 }
 $conn->set_charset("utf8mb4");
 
-// Capturar datos y arreglar dirección
 $idUsuario = $_SESSION['idUsuario'];
 $idCategoria = isset($_POST['idCategoria']) ? intval($_POST['idCategoria']) : NULL;
 $latitud = isset($_POST['latitud']) ? trim($_POST['latitud']) : NULL;
 $longitud = isset($_POST['longitud']) ? trim($_POST['longitud']) : NULL;
-$descrip = isset($_POST['descripcion']) ? trim($_POST['descripcion']) : 'Sin descripción';
+$descrip = isset($_POST['descripcion']) ? trim($_POST['descripcion']) : 'Sin descripcion';
 
 $ubicacion_completa = isset($_POST['ubicacion']) ? trim($_POST['ubicacion']) : '';
 $partes_ubicacion = explode(',', $ubicacion_completa);
-$calle = isset($partes_ubicacion[0]) ? trim($partes_ubicacion[0]) : NULL;
-$municipio = isset($partes_ubicacion[1]) ? trim($partes_ubicacion[1]) : NULL;
+$calle = isset($partes_ubicacion[0]) ? trim($partes_ubicacion[0]) : 'Sin calle';
+$municipio = isset($partes_ubicacion[1]) ? trim($partes_ubicacion[1]) : 'Sin municipio';
 
 $colonia = NULL;
 $fecha = date("Y-m-d");
@@ -59,51 +52,32 @@ if (!$idCategoria || !$latitud || !$longitud) {
     exit;
 }
 
-// ═══════════════════════════════════════════════════════════════
-// PROCESAR IMAGEN (AHORA CON DIAGNÓSTICO)
-// ═══════════════════════════════════════════════════════════════
 $nombre_foto = "sin_foto.jpg";
-$diagnostico = "No se detectó el campo 'evidencia' en el formulario.";
+$diagnostico = "Sin archivo";
 
-if (isset($_FILES['evidencia'])) {
-    $error_foto = $_FILES['evidencia']['error'];
-
-    if ($error_foto === UPLOAD_ERR_OK) {
-        $carpeta_destino = 'uploads/';
-        if (!file_exists($carpeta_destino)) { mkdir($carpeta_destino, 0777, true); }
-        
-        $info_archivo = pathinfo($_FILES['evidencia']['name']);
-        $extension = strtolower($info_archivo['extension']);
-        $extensiones_permitidas = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-        
-        if (!in_array($extension, $extensiones_permitidas)) {
-            http_response_code(400);
-            echo json_encode(["status" => "error", "message" => "Formato no permitido"]);
-            exit;
-        }
-        
+if (isset($_FILES['evidencia']) && $_FILES['evidencia']['error'] === UPLOAD_ERR_OK) {
+    $carpeta_destino = 'uploads/';
+    if (!file_exists($carpeta_destino)) { 
+        mkdir($carpeta_destino, 0777, true); 
+    }
+    
+    $info_archivo = pathinfo($_FILES['evidencia']['name']);
+    $extension = strtolower($info_archivo['extension']);
+    $extensiones_permitidas = array('jpg', 'jpeg', 'png', 'gif', 'webp');
+    
+    if (in_array($extension, $extensiones_permitidas)) {
         $nombre_foto = "reporte_" . time() . "_" . uniqid() . "." . $extension;
-        
         if (move_uploaded_file($_FILES['evidencia']['tmp_name'], $carpeta_destino . $nombre_foto)) {
-            $diagnostico = "¡Éxito! Imagen guardada en servidor.";
+            $diagnostico = "Imagen guardada";
         } else {
-            $diagnostico = "Fallo al mover la imagen a la carpeta uploads.";
             $nombre_foto = "sin_foto.jpg";
+            $diagnostico = "Fallo al guardar imagen";
         }
-    } elseif ($error_foto === UPLOAD_ERR_NO_FILE) {
-        $diagnostico = "Ningún archivo fue seleccionado o adjuntado.";
-    } elseif ($error_foto === UPLOAD_ERR_INI_SIZE || $error_foto === UPLOAD_ERR_FORM_SIZE) {
-        http_response_code(400);
-        echo json_encode(["status" => "error", "message" => "La imagen es demasiado pesada. Límite 2MB."]);
-        exit;
     } else {
-        $diagnostico = "Error de subida en PHP. Código: " . $error_foto;
+        $diagnostico = "Formato no permitido";
     }
 }
 
-// ═══════════════════════════════════════════════════════════════
-// INSERTAR EN BD
-// ═══════════════════════════════════════════════════════════════
 $sql = "INSERT INTO reporte (colonia, calle, municipio, latitud, longitud, descrip, fecha, hora, foto, estatus, idUsuario, idCategoria) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -111,27 +85,23 @@ $stmt = $conn->prepare($sql);
 
 if (!$stmt) {
     http_response_code(500);
-    echo json_encode(["status" => "error", "message" => "Error en preparación SQL: " . $conn->error]);
+    echo json_encode(["status" => "error", "message" => "Error SQL: " . $conn->error]);
     exit;
 }
 
-if (!$stmt->bind_param("ssssssssssii", $colonia, $calle, $municipio, $latitud, $longitud, $descrip, $fecha, $hora, $nombre_foto, $estatus, $idUsuario, $idCategoria)) {
-    http_response_code(500);
-    echo json_encode(["status" => "error", "message" => "Error en bind: " . $stmt->error]);
-    exit;
-}
+$stmt->bind_param("ssssssssssii", $colonia, $calle, $municipio, $latitud, $longitud, $descrip, $fecha, $hora, $nombre_foto, $estatus, $idUsuario, $idCategoria);
 
 if ($stmt->execute()) {
     http_response_code(201);
     echo json_encode([
         "status" => "success",
-        "message" => "¡Reporte guardado exitosamente!",
+        "message" => "Reporte guardado correctamente",
         "diagnostico" => $diagnostico,
-        "nombre_final" => $nombre_foto
+        "nombre_foto" => $nombre_foto
     ]);
 } else {
     http_response_code(500);
-    echo json_encode(["status" => "error", "message" => "Error BD: " . $stmt->error]);
+    echo json_encode(["status" => "error", "message" => "Error al insertar: " . $stmt->error]);
 }
 
 $stmt->close();
