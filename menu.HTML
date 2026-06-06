@@ -16,9 +16,11 @@
         .main-content { margin-left: 250px; padding: 40px; }
         .card-custom { border: none; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); background-color: white; }
         .feed-horizontal { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 15px; scroll-behavior: smooth; }
-        .report-post { min-width: 350px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background: white; }
-        .report-post .card-body { min-height: 140px; display: flex; flex-direction: column; }
-        .report-post .card-body p { flex-grow: 1; word-wrap: break-word; overflow-wrap: break-word; white-space: normal; line-height: 1.4; }
+        .report-post { min-width: 350px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background: white; padding: 20px; }
+        .report-post .card-body { min-height: 120px; display: flex; flex-direction: column; padding: 0; }
+        .report-post .card-body p { flex-grow: 1; word-wrap: break-word; overflow-wrap: break-word; white-space: normal; line-height: 1.4; margin-bottom: 0; }
+        .report-post .badge { width: 100%; text-align: center; padding: 8px 12px; margin-bottom: 12px; font-size: 0.9rem; }
+        .report-post .title { font-weight: bold; margin-bottom: 8px; font-size: 1rem; }
         #mapa-general { height: 320px; border-radius: 15px; }
     </style>
 </head>
@@ -81,27 +83,21 @@
         fetch('get_reportes_data.php')
         .then(response => response.json())
         .then(data => {
-            // 1. Actualizar contadores (esto ya lo tienes)
+            // 1. Actualizar contadores
             document.getElementById('count-pendientes').textContent = data.stats['Pendiente'] || 0;
             document.getElementById('count-revision').textContent = data.stats['En Revisión'] || 0;
             document.getElementById('count-atendidos').textContent = data.stats['Atendido'] || 0;
 
-            // 2. RENDERIZAR TARJETAS (Agrega esto)
+            // 2. RENDERIZAR TARJETAS SIN IMAGEN
             const container = document.getElementById('contenedor-reportes');
-            container.innerHTML = ''; // Limpiar previo
+            container.innerHTML = '';
 
             data.reportes.forEach(rep => {
-                // Manejo de imagen - Usar imagen por defecto más profesional
-                let fotoSrc = (rep.foto && rep.foto !== 'sin_foto.jpg') ? 'uploads/' + rep.foto : 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80';
-            
                 container.innerHTML += `
-                    <div class="card report-post p-3">
-                        <img src="${fotoSrc}" class="card-img-top rounded-3" style="height: 150px; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80'">
-                        <div class="card-body px-0 pt-3">
-                            <span class="badge bg-primary mb-2">${rep.estatus}</span>
-                            <h6 class="fw-bold mb-2"><i class="fa-solid fa-map-pin text-danger me-2"></i>${rep.calle || 'Ubicación desconocida'}</h6>
-                            <p class="small text-muted" style="word-wrap: break-word; overflow-wrap: break-word; white-space: normal;">${rep.descrip || 'Sin descripción'}</p>
-                        </div>
+                    <div class="report-post">
+                        <span class="badge bg-primary">${rep.estatus}</span>
+                        <div class="title"><i class="fa-solid fa-map-pin text-danger me-2"></i>${rep.calle || 'Ubicación desconocida'}</div>
+                        <p class="small text-muted">${rep.descrip || 'Sin descripción'}</p>
                     </div>`;
 
                 // 3. Poner pines en el mapa
