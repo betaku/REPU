@@ -16,7 +16,9 @@
         .main-content { margin-left: 250px; padding: 40px; }
         .card-custom { border: none; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); background-color: white; }
         .feed-horizontal { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 15px; scroll-behavior: smooth; }
-        .report-post { min-width: 300px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+        .report-post { min-width: 350px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background: white; }
+        .report-post .card-body { min-height: 140px; display: flex; flex-direction: column; }
+        .report-post .card-body p { flex-grow: 1; word-wrap: break-word; overflow-wrap: break-word; white-space: normal; line-height: 1.4; }
         #mapa-general { height: 320px; border-radius: 15px; }
     </style>
 </head>
@@ -64,7 +66,7 @@
         </div>
 
         <div class="row g-4">
-            <div class="col-md-4"><div class="card border-0 p-4 shadow-sm h-100" style="background: linear-gradient(135deg, #0d47a1, #1976d2); color: white; border-radius: 15px;"><h5>¿Detectaste un problema?</h5><a href="reportar.html" class="btn btn-light mt-3">Ir a Reportar</a></div></div>
+            <div class="col-md-4"><div class="card border-0 p-4 shadow-sm h-100" style="background: linear-gradient(135deg, #0d47a1, #1976d2); color: white; border-radius: 15px;"><h5>¿Detectaste un problema urbano?</h5><p>Reporta incidencias en tu ciudad y ayuda a mejorar la gestión urbana.</p><a href="reportar.html" class="btn btn-light btn-sm mt-3">Crear Reporte</a></div></div>
             <div class="col-md-8"><div class="card card-custom p-3"><h5>Ubicación Geográfica</h5><div id="mapa-general"></div></div></div>
         </div>
     </div>
@@ -89,16 +91,16 @@
             container.innerHTML = ''; // Limpiar previo
 
             data.reportes.forEach(rep => {
-                // Manejo de imagen
-                let fotoSrc = (rep.foto && rep.foto !== 'sin_foto.jpg') ? 'uploads/' + rep.foto : 'https://images.unsplash.com/photo-1572214350916-571eac7bfced?auto=format&fit=crop&w=600&q=80';
+                // Manejo de imagen - Usar imagen por defecto más profesional
+                let fotoSrc = (rep.foto && rep.foto !== 'sin_foto.jpg') ? 'uploads/' + rep.foto : 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80';
             
                 container.innerHTML += `
                     <div class="card report-post p-3">
-                        <img src="${fotoSrc}" class="card-img-top rounded-3" style="height: 150px; object-fit: cover;">
-                        <div class="card-body px-0">
+                        <img src="${fotoSrc}" class="card-img-top rounded-3" style="height: 150px; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80'">
+                        <div class="card-body px-0 pt-3">
                             <span class="badge bg-primary mb-2">${rep.estatus}</span>
-                            <h6 class="fw-bold">${rep.calle || 'Ubicación desconocida'}</h6>
-                            <p class="small text-muted text-truncate">${rep.descrip || 'Sin descripción'}</p>
+                            <h6 class="fw-bold mb-2"><i class="fa-solid fa-map-pin text-danger me-2"></i>${rep.calle || 'Ubicación desconocida'}</h6>
+                            <p class="small text-muted" style="word-wrap: break-word; overflow-wrap: break-word; white-space: normal;">${rep.descrip || 'Sin descripción'}</p>
                         </div>
                     </div>`;
 
