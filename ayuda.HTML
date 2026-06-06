@@ -135,8 +135,24 @@
                     <h5 class="fw-bold">¿Aún necesitas soporte?</h5>
                     <p class="small text-muted mb-4">Si tienes problemas técnicos con tu cuenta o la carga de datos, ponte en contacto con los desarrolladores del sistema.</p>
                     <div class="d-grid gap-2">
-                        <a href="mailto:soporte@repu.gob.mx" class="btn btn-primary fw-bold"><i class="fa-solid fa-envelope me-2"></i>Enviar Correo</a>
-                        <button class="btn btn-outline-secondary btn-sm fw-semibold">Llamar a Soporte</button>
+                      <!-- El botón con un ID para identificarlo -->
+<button id="btnCopiar" class="btn btn-outline-secondary btn-sm fw-semibold">
+  Contacto del Soporte 834 254 7968
+</button>
+
+<!-- Script para copiar al portapapeles -->
+<script>
+  document.getElementById('btnCopiar').addEventListener('click', function() {
+    const numero = '834 254 7968';
+
+    // API para copiar al portapapeles
+    navigator.clipboard.writeText(numero).then(() => {
+      alert('Número copiado: ' + numero);
+    }).catch(err => {
+      console.error('Error al copiar: ', err);
+    });
+  });
+</script>
                     </div>
                 </div>
             </div>
