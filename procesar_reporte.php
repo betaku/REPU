@@ -115,7 +115,11 @@ if (!$stmt) {
     exit;
 }
 
-$stmt->bind_param("ssssssssssii", $colonia, $calle, $municipio, $latitud, $longitud, $descrip, $fecha, $hora, $nombre_foto, $estatus, $idUsuario, $idCategoria);
+if (!$stmt->bind_param("ssssssssssii", $colonia, $calle, $municipio, $latitud, $longitud, $descrip, $fecha, $hora, $nombre_foto, $estatus, $idUsuario, $idCategoria)) {
+    http_response_code(500);
+    echo json_encode(["status" => "error", "message" => "Error en bind: " . $stmt->error]);
+    exit;
+}
 
 if ($stmt->execute()) {
     http_response_code(201);
