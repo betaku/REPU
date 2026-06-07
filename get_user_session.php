@@ -7,7 +7,8 @@ if (isset($_SESSION['idUsuario'])) {
         "status" => "success",
         "idUsuario" => $_SESSION['idUsuario'],
         "nombre" => $_SESSION['nombre'] ?? 'Usuario',
-        "correo" => $_SESSION['correo'] ?? ''
+        "correo" => $_SESSION['correo'] ?? '',
+        "tipo" => $_SESSION['tipo'] ?? 'ciudadano' // Enviamos el rol al frontend
     ]);
 } else {
     echo json_encode([

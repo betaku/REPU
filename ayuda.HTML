@@ -1,6 +1,7 @@
 <?php include 'check_session.php'; ?>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
             background-color: #f8f9fa;
             font-family: 'Segoe UI', sans-serif;
         }
+
         .sidebar {
             height: 100vh;
             width: 250px;
@@ -22,6 +24,7 @@
             padding-top: 20px;
             color: white;
         }
+
         .sidebar a {
             padding: 15px 25px;
             text-decoration: none;
@@ -29,25 +32,30 @@
             color: #d1d1d1;
             display: block;
         }
+
         .sidebar a:hover {
             color: white;
             background-color: #1565c0;
         }
+
         .sidebar a.active {
             background-color: #1976d2;
             color: white;
             border-left: 5px solid #bbdefb;
         }
+
         .main-content {
             margin-left: 250px;
             padding: 40px;
         }
+
         .card-custom {
             border: none;
             border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             background-color: white;
         }
+
         .contact-icon {
             font-size: 2rem;
             color: #0d47a1;
@@ -55,6 +63,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="sidebar shadow">
@@ -62,69 +71,85 @@
             <h3 class="fw-bold">REPU</h3>
             <p class="small opacity-75">Gestión Urbana</p>
         </div>
-        <a href="menu.html"><i class="fa-solid fa-house me-2"></i> Inicio</a>
+        <a href="menu.php"><i class="fa-solid fa-house me-2"></i> Inicio</a>
         <a href="reportar.html"><i class="fa-solid fa-file-pen me-2"></i> Crear Reporte</a>
         <a href="historial.php"><i class="fa-solid fa-list-check me-2"></i> Historial</a>
         <a href="ayuda.html" class="active"><i class="fa-solid fa-circle-question me-2"></i> Ayuda</a>
         <hr class="mx-3 opacity-25">
         <a href="logout.php" class="text-danger">
-        <i class="fa-solid fa-right-from-bracket me-2"></i> Cerrar Sesión
+            <i class="fa-solid fa-right-from-bracket me-2"></i> Cerrar Sesión
         </a>
     </div>
 
     <div class="main-content">
         <div class="mb-4">
             <h2 class="fw-bold">Centro de Ayuda</h2>
-            <p class="text-muted">¿Tienes dudas sobre cómo utilizar la plataforma REPU? Consulta nuestras guías rápidas.</p>
+            <p class="text-muted">¿Tienes dudas sobre cómo utilizar la plataforma REPU? Consulta nuestras guías rápidas.
+            </p>
         </div>
 
         <div class="row g-4">
             <div class="col-lg-8">
                 <div class="card card-custom p-4">
-                    <h4 class="fw-bold text-dark mb-4"><i class="fa-solid fa-comments text-primary me-2"></i>Preguntas Frecuentes</h4>
-                    
+                    <h4 class="fw-bold text-dark mb-4"><i class="fa-solid fa-comments text-primary me-2"></i>Preguntas
+                        Frecuentes</h4>
+
                     <div class="accordion accordion-flush" id="accordionFAQ">
-                        
+
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="flush-headingOne">
-                                <button class="accordion-button collapsed fw-semibold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne">
+                                <button class="accordion-button collapsed fw-semibold text-dark" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#flush-collapseOne">
                                     ¿Cómo puedo levantar un nuevo reporte urbano?
                                 </button>
                             </h2>
-                            <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
+                            <div id="flush-collapseOne" class="accordion-collapse collapse"
+                                data-bs-parent="#accordionFAQ">
                                 <div class="accordion-body text-muted">
-                                    Es muy sencillo. Dirígete a la sección <strong>"Crear Reporte"</strong> desde el menú lateral. Selecciona el tipo de problemática (baches, luminarias, etc.), introduce la dirección exacta y una breve descripción. Finalmente, da clic en el botón de enviar.
+                                    Es muy sencillo. Dirígete a la sección <strong>"Crear Reporte"</strong> desde el
+                                    menú lateral. Selecciona el tipo de problemática (baches, luminarias, etc.),
+                                    introduce la dirección exacta y una breve descripción. Finalmente, da clic en el
+                                    botón de enviar.
                                 </div>
                             </div>
                         </div>
 
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="flush-headingTwo">
-                                <button class="accordion-button collapsed fw-semibold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo">
+                                <button class="accordion-button collapsed fw-semibold text-dark" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo">
                                     ¿Cuánto tiempo tardan las autoridades en revisar mi reporte?
                                 </button>
                             </h2>
-                            <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
+                            <div id="flush-collapseTwo" class="accordion-collapse collapse"
+                                data-bs-parent="#accordionFAQ">
                                 <div class="accordion-body text-muted">
-                                    El tiempo promedio de validación es de 24 a 48 horas hábiles. Podrás ver el cambio de estado en tiempo real (de "En Revisión" a "Atendido") ingresando a tu <strong>Historial</strong>.
+                                    El tiempo promedio de validación es de 24 a 48 horas hábiles. Podrás ver el cambio
+                                    de estado en tiempo real (de "En Revisión" a "Atendido") ingresando a tu
+                                    <strong>Historial</strong>.
                                 </div>
                             </div>
                         </div>
 
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="flush-headingThree">
-                                <button class="accordion-button collapsed fw-semibold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree">
+                                <button class="accordion-button collapsed fw-semibold text-dark" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#flush-collapseThree">
                                     ¿Es obligatorio subir una fotografía de la falla?
                                 </button>
                             </h2>
-                            <div id="flush-collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
+                            <div id="flush-collapseThree" class="accordion-collapse collapse"
+                                data-bs-parent="#accordionFAQ">
                                 <div class="accordion-body text-muted">
-                                    No, el campo de evidencia fotográfica es completamente opcional. Sin embargo, subir una imagen ayuda significativamente a los equipos de mantenimiento urbano a identificar el problema más rápido.
+                                    No, el campo de evidencia fotográfica es completamente opcional. Sin embargo, subir
+                                    una imagen ayuda significativamente a los equipos de mantenimiento urbano a
+                                    identificar el problema más rápido.
                                 </div>
                             </div>
                         </div>
 
-                    </div> </div>
+                    </div>
+                </div>
             </div>
 
             <div class="col-lg-4">
@@ -133,33 +158,76 @@
                         <i class="fa-solid fa-headset"></i>
                     </div>
                     <h5 class="fw-bold">¿Aún necesitas soporte?</h5>
-                    <p class="small text-muted mb-4">Si tienes problemas técnicos con tu cuenta o la carga de datos, ponte en contacto con los desarrolladores del sistema.</p>
+                    <p class="small text-muted mb-4">Si tienes problemas técnicos con tu cuenta o la carga de datos,
+                        ponte en contacto con los desarrolladores del sistema.</p>
                     <div class="d-grid gap-2">
-                      <!-- El botón con un ID para identificarlo -->
-<button id="btnCopiar" class="btn btn-outline-secondary btn-sm fw-semibold">
-  Contacto del Soporte 834 254 7968
-</button>
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=ferchomc678@gmail.com" target="_blank"
+                            class="btn btn-primary fw-bold">
+                            <i class="fa-solid fa-envelope me-2"></i>Enviar Correo
+                        </a>
 
-<!-- Script para copiar al portapapeles -->
-<script>
-  document.getElementById('btnCopiar').addEventListener('click', function() {
-    const numero = '834 254 7968';
+                        <!-- El botón con un ID para identificarlo -->
+                        <button id="btnCopiar" class="btn btn-outline-secondary btn-sm fw-semibold">
+                            Contacto del Soporte 834 254 7968
+                        </button>
 
-    // API para copiar al portapapeles
-    navigator.clipboard.writeText(numero).then(() => {
-      alert('Número copiado: ' + numero);
-    }).catch(err => {
-      console.error('Error al copiar: ', err);
-    });
-  });
-</script>
+                        <!-- Script para copiar al portapapeles -->
+                        <script>
+                            document.getElementById('btnCopiar').addEventListener('click', function () {
+                                const numero = '834 254 7968';
+
+                                // API para copiar al portapapeles
+                                navigator.clipboard.writeText(numero).then(() => {
+                                    alert('Número copiado: ' + numero);
+                                }).catch(err => {
+                                    console.error('Error al copiar: ', err);
+                                });
+                            });
+                        </script>
                     </div>
                 </div>
             </div>
         </div>
 
-    </div>
+<!-- Nueva sección de Comentarios -->
+<div class="row mt-4">
+            <div class="col-12">
+                <div class="card card-custom p-4 shadow-sm border-0">
+                    <h4 class="fw-bold mb-3"><i class="fa-solid fa-pen-nib text-primary me-2"></i>Envíanos tu opinión</h4>
+                    <form id="formComentario">
+                        <div class="mb-3">
+                            <textarea id="textoComentario" class="form-control" rows="3" placeholder="¿Qué te pareció nuestra página?"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary px-4">Enviar Comentario</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+</div>
+<script>
+document.getElementById('formComentario').addEventListener('submit', function(e) {
+    e.preventDefault(); // Evita que la página se recargue
+    
+    const texto = document.getElementById('textoComentario').value;
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    // Enviamos el texto al servidor que vive en el puerto 5000
+    fetch('http://localhost:5000/guardar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texto: texto })
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert('¡Gracias! Tu comentario se guardó en la base de datos.');
+        document.getElementById('textoComentario').value = ''; // Limpia el cuadro
+    })
+    .catch(err => {
+        console.error(err);
+        alert('Error: Asegúrate de que el servidor (node server.js) esté corriendo.');
+    });
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
